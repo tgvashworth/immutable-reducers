@@ -1,0 +1,14 @@
+{
+  env: {
+    development: {
+      plugins: [
+        "typecheck"
+      ]
+    }
+  },
+  optional: [
+    "es7.classProperties",
+    "runtime"
+  ],
+  stage: 1
+}
