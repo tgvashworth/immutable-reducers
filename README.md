@@ -6,6 +6,9 @@ Create reducers for [immutable][immutable] data structures. Useful for [redux][r
 
 * [Install](#install)
 * [Use](#use)
+* [`createReducer`](#createreducer)
+* [`combineReducers`](#combinereducers)
+* [Use](#use)
 * [Contributing](#contributing)
 * [Thanks](#thanks)
 * [License](#license)
@@ -46,16 +49,12 @@ const artistNameReducer = createReducer(['artist', 'name'], (state, action) => {
 
 // You can scope them by combining with an object
 
-const fansReducer = createReducer(['fans'], (state, action) => {
+const artistFansReducer = createReducer(['artis', 'fans'], (state, action) => {
     switch (action.type) {
         case 'NEW_FAN':
             return state + action.count;
     }
     return state;
-});
-
-const artistFansReducer = combineReducers({
-    artist: fansReducer // the full path is then ['artist', 'fans']
 });
 
 // Combine 'em up
@@ -67,6 +66,76 @@ const reducer = combineReducers(artistNameReducer, artistFansReducer);
 reducer(initialState, { type: 'NEW_FAN', count: 1 });
 
 ```
+
+## `createReducer`
+
+`createReducer` helps you make a reducer that operates on a small area of an immutable data structure.
+
+```js
+createReducer(keyPath: Array<any>, updater: (state: any, action: Object) => any): any
+```
+
+For example, given some initial state:
+
+```js
+const initialState = fromJS({
+    user: {
+        favorites: Immutable.OrderedSet()
+    }
+});
+```
+
+We can create a reducer that looks out for favorite actions and remembers the id:
+
+```js
+const favoriteReducer = createReducer(['user', 'favorites'], (favorites, action) => {
+    switch (action.type) {
+        case 'FAVORITE':
+            return favorites.add(action.id);
+    }
+    return favorites;
+});
+```
+
+`createReducer` handles reaching into the data structure and updating the value.
+
+Good to know:
+
+- If the updater function returns the same value it was called with, then no change will occur.
+- If the `keyPath` you specify does not exist, an Immutable `Map` will be created at each intermediary key.
+- The keys can be immutable data structures too #winning
+
+## `combineReducers`
+
+`combineReducers` is a less opinionated version of redux's default [`combineReducers`][redux-combinereducers] utility.
+
+```js
+type Reducer = (state: any, action: Object) => any;
+type ReducerObject = Object<string, Reducer>;
+
+combineReducers(...Reducer|ReducerObject): Reducer
+```
+
+It has two useful forms: applied to a list of reducers or to an object. When applied to the list, it acts like redux's combineReducers.
+
+When applied to an object, it's slightly different. `immutable-reducers` will use the key of the object to 'scope' the reducer further.
+
+For example, in the following example:
+You could scope it to the `user` key of your (immutable) state using `combineReducers`:
+
+```js
+const combineReducer = combineReducers({
+    user: createReducer(['favorites'], (favorites, action) => {
+        switch (action.type) {
+            case 'FAVORITE':
+                return favorites.add(action.id);
+        }
+        return favorites;
+    });
+});
+```
+
+The end result is the same as the `createReducers` example, where the `favoritesReducer` will actually operate on the `['user', 'favorites']` key path.
 
 ## Contributing
 
@@ -86,4 +155,4 @@ license](http://www.opensource.org/licenses/mit-license.php).
 [immutable]: https://facebook.github.io/immutable-js/
 [rackt]: https://github.com/rackt
 [redux]: http://rackt.github.io/redux/
-
+[redux-combinereducers]: http://rackt.github.io/redux/docs/api/combineReducers.html
