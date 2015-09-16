@@ -80,7 +80,7 @@ describe('createReducer', () => {
     assert(
       fakePathReducer(initialState, actions.NOOP).hasIn(['this', 'path', 'is', 'fake']),
       'non-existant path is created'
-    )
+    );
   });
 });
 
