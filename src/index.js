@@ -66,8 +66,8 @@ const combineReducers = (...rawReducers) => {
 
  * Returns a reducing function.
  */
-const createReducer = (path, reducer) => (initialState, action) =>
-  initialState.updateIn(path, v => reducer(v, action));
+const createReducer = (path, reducer) => (initialState, action, globalState = initialState) =>
+  initialState.updateIn(path, v => reducer(v, action, globalState));
 
 export default {
   combineReducers,

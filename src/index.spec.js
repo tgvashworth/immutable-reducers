@@ -26,31 +26,31 @@ const initialState = fromJS({
   }
 });
 
-const nameReducer = createReducer(['artist', 'name'], (state, action) => {
+const nameReducer = createReducer(['artist', 'name'], (name, action) => {
   switch (action.type) {
     case 'RENAME':
       return fromJS(action.value);
   }
-  return state;
+  return name;
 });
 
-const followersReducer = createReducer(['artist', 'followers'], (state, action) => {
+const followersReducer = createReducer(['artist', 'followers'], (followers, action) => {
   switch (action.type) {
     case 'FOLLOW':
-      return state + action.value;
+      return followers + action.value;
   }
-  return state;
+  return followers;
 });
 
-const albumsReducer = createReducer(['albums'], (state, action) => {
+const albumsReducer = createReducer(['albums'], (albums, action) => {
   switch (action.type) {
     case 'RELEASE':
-      return state.push(fromJS(action.value));
+      return albums.push(fromJS(action.value));
   }
-  return state;
+  return albums;
 });
 
-const fakePathReducer = createReducer(['this', 'path', 'is', 'fake'], (state, action) => {
+const fakePathReducer = createReducer(['this', 'path', 'is', 'fake'], (_, action) => {
   return fromJS({ no: 'thanks' });
 });
 
@@ -81,6 +81,41 @@ describe('createReducer', () => {
       fakePathReducer(initialState, actions.NOOP).hasIn(['this', 'path', 'is', 'fake']),
       'non-existant path is created'
     );
+  });
+
+  it('passes whole state object', () => {
+    const reducer = createReducer(['artist'], (artist, action, state) => {
+      assert(
+        state === initialState,
+        'is passed initialState'
+      );
+      assert(
+        artist === state.get('artist'),
+        'gets target state object'
+      );
+    });
+
+    reducer(initialState, {});
+  });
+
+  it('the state object is passed through composition', () => {
+    const nameReducer = createReducer(['name'], (name, action, state) => {
+      assert(
+        state === initialState,
+        'is passed initialState'
+      );
+      assert(
+        name === initialState.getIn(['artist', 'name']),
+        'gets target state object'
+      );
+      return name;
+    });
+
+    const reducer = combineReducers({
+      artist: nameReducer
+    });
+
+    reducer(initialState, {});
   });
 });
 

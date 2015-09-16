@@ -74,7 +74,11 @@ reducer(initialState, { type: 'NEW_FAN', count: 1 });
 `createReducer` helps you make a reducer that operates on a small area of an immutable data structure.
 
 ```js
-createReducer(keyPath: Array<any>, updater: (state: any, action: Object) => any): any
+createReducer(
+    keyPath: Array<any>,
+    updater: (targetState: any, action: Object) => any,
+    state: any
+): any
 ```
 
 For example, given some initial state:
@@ -106,6 +110,7 @@ Good to know:
 - If the updater function returns the same value it was called with, then no change will occur.
 - If the `keyPath` you specify does not exist, an Immutable `Map` will be created at each intermediary key.
 - The keys can be immutable data structures too #winning
+- The third argument to the reducer is the whole state object, allowing you consult other areas of state when handling an action
 
 ## `combineReducers`
 
