@@ -50,6 +50,10 @@ const albumsReducer = createReducer(['albums'], (state, action) => {
   return state;
 });
 
+const fakePathReducer = createReducer(['this', 'path', 'is', 'fake'], (state, action) => {
+  return fromJS({ no: 'thanks' });
+});
+
 const actions = {
   FOLLOW: { type: 'FOLLOW', value: 1 },
   RENAME: { type: 'RENAME', value: { first: 'Puff', last: 'Daddy' } },
@@ -70,6 +74,13 @@ describe('createReducer', () => {
       nameReducer(initialState, actions.NOOP) === initialState,
       'data is untouched'
     );
+  });
+
+  it('can handle non-existant paths', () => {
+    assert(
+      fakePathReducer(initialState, actions.NOOP).hasIn(['this', 'path', 'is', 'fake']),
+      'non-existant path is created'
+    )
   });
 });
 
