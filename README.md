@@ -76,8 +76,7 @@ reducer(initialState, { type: 'NEW_FAN', count: 1 });
 ```js
 createReducer(
     keyPath: Array<any>,
-    updater: (targetState: any, action: Object) => any,
-    state: any
+    updater: (targetState: any, action: Object, state: any) => any
 ): any
 ```
 
