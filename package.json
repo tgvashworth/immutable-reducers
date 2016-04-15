@@ -38,7 +38,7 @@
     "karma-webpack": "^1.7.0",
     "mocha": "^2.3.2",
     "object-assign": "^4.0.1",
-    "webpack": "^1.12.1",
+    "webpack": "^1.13.0",
     "semantic-release": "^4.3.4"
   },
   "dependencies": {},
